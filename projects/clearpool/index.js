@@ -21,7 +21,8 @@ const CHAIN = {
   POLYGON: "polygon",
   POLYGON_ZKEVM: "polygon_zkevm",
   FLARE: "flare",
-  BASE: "base"
+  BASE: "base",
+  MANTLE: 'mantle'
 };
 
 const config = {
