@@ -77,12 +77,11 @@ const getEventAndABI = (protocol) => {
   return { borrowFn, abi };
 };
 
-
 Object.keys(config).forEach((protocol) => {
   const networks = Object.keys(config[protocol]);
   networks.forEach((chain) => {
     const { fromBlock, factory } = config[protocol][chain];
-    const {abi, borrowFn} = getEventAndABI(protocol)
+    const { abi, borrowFn } = getEventAndABI(protocol);
 
     const tvl = async (api) => {
       const { pools, tokens } = await _getLogs(api);
@@ -98,8 +97,12 @@ Object.keys(config).forEach((protocol) => {
         onlyArgs: true,
       });
 
-      const pools = logs.map((log) => protocol =='treasury'? log.treasuryYieldAddress : log.pool);
-      const tokens = logs.map((log) => protocol == 'dynamic' ? log.token : log.asset);
+      const pools = logs.map((log) =>
+        protocol == "treasury" ? log.treasuryYieldAddress : log.pool
+      );
+      const tokens = logs.map((log) =>
+        protocol == "dynamic" ? log.token : log.asset
+      );
       return { pools, tokens };
     }
 
@@ -112,6 +115,5 @@ Object.keys(config).forEach((protocol) => {
     module.exports[chain] = { tvl, borrowed };
   });
 });
-
 
 module.exports.ethereum.staking = stakings(singleStakingContracts, CPOOL);
