@@ -47,6 +47,10 @@ const config = {
       factory: "0x99C10A7aBd93b2db6d1a2271e69F268a2c356b80",
       fromBlock: 113112037,
     },
+    [CHAIN.MANTLE]: {
+       factory: '0xB217D93a8f6A4b7861bB2C865a8C22105FbCdE41', 
+       fromBlock: 49691271 ,
+    }
   },
   vaults: {
     [CHAIN.BASE]: {
