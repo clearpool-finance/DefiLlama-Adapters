@@ -13,41 +13,52 @@ module.exports = {
   methodology: "We count liquidity by Stables deposited on the pools contracts",
 };
 
+const CHAIN = {
+  ARBITRUM: "arbitrum",
+  AVAX: "avax",
+  ETHEREUM: "ethereum",
+  OPTIMISM: "optimism",
+  POLYGON: "polygon",
+  POLYGON_ZKEVM: "polygon_zkevm",
+  FLARE: "flare",
+  BASE: "base"
+};
+
 const config = {
   dynamic: {
-    ethereum: {
+    [CHAIN.ETHEREUM]: {
       factory: "0xde204e5a060ba5d3b63c7a4099712959114c2d48",
       fromBlock: 14443222,
     },
-    polygon_zkevm: {
+    [CHAIN.POLYGON_ZKEVM]: {
       factory: "0xCE3Fec90A05992dF1357651FEF6D143FeeC7Ca16",
       fromBlock: 302970,
     },
-    polygon: {
+    [CHAIN.POLYGON]: {
       factory: "0x215CCa938dF02c9814BE2D39A285B941FbdA79bA",
       fromBlock: 31128013,
     },
-    optimism: {
+    [CHAIN.OPTIMISM]: {
       factory: "0x99C10A7aBd93b2db6d1a2271e69F268a2c356b80",
       fromBlock: 107128813,
     },
-    arbitrum: {
+    [CHAIN.ARBITRUM]: {
       factory: "0x99C10A7aBd93b2db6d1a2271e69F268a2c356b80",
       fromBlock: 113112037,
     },
   },
   vaults: {
-    base: {
+    [CHAIN.BASE]: {
       factory: "0x199A016FFbe14781365bCaED9Cc52598B205DfAd",
       fromBlock: 12634153,
     },
-    avax: {
+    [CHAIN.AVAX]: {
       factory: "0x8E557363AC9E5cbf09A2616A302CA3c8f6ab2b7A",
       fromBlock: 42597808,
     },
   },
   treasury: {
-    flare: {
+    [CHAIN.FLARE]: {
       factory: "0x8E557363AC9E5cbf09A2616A302CA3c8f6ab2b7A",
       fromBlock: 23711495,
     },
