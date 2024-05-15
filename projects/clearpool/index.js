@@ -137,7 +137,7 @@ Object.keys(config).forEach((protocol) => {
           const newResult = await tvl(api);
           for (const [token, amount] of Object.entries(newResult)) {
             originalResult[token] =
-              Number(originalResult[token]) + Number(amount);
+              api.add(originalResult[token], amount);
           }
           return originalResult;
         };
@@ -147,8 +147,8 @@ Object.keys(config).forEach((protocol) => {
         return async function (api) {
           const originalResult = await originalBorrowed(api);
           const newResult = await borrowed(api);
-          console.log(originalResult || "sth", newResult || "sth");
-          return Number(originalResult) + Number(newResult);
+         // return Number(originalResult) + Number(newResult);
+          return api.add(originalResult, newResult)
         };
       })(module.exports[chain].borrowed);
     }
