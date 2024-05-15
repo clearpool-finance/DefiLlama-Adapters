@@ -139,7 +139,6 @@ Object.keys(config).forEach((protocol) => {
             originalResult[token] =
               Number(originalResult[token]) + Number(amount);
           }
-          console.log(originalResult)
           return originalResult;
         };
       })(module.exports[chain].tvl);
