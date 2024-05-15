@@ -143,9 +143,7 @@ Object.keys(config).forEach((protocol) => {
       return async (api) => {
         const originalResult = await originalBorrowed(api)
         const newResult = await borrowed(api)
-        console.log(originalResult, Number(newResult))
         return Number(originalResult) + Number(newResult);
-        // return api.add(originalResult, newResult);
       };
     };
      
