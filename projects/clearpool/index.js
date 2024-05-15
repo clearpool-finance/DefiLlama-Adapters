@@ -60,8 +60,6 @@ const config = {
       factory: "0x8E557363AC9E5cbf09A2616A302CA3c8f6ab2b7A",
       fromBlock: 42597808,
     },
-    
-
   },
   treasury: {
     [CHAIN.FLARE]: {
@@ -93,7 +91,7 @@ const getEventAndABI = (protocol) => {
   }
   return { borrowFn, abi };
 };
-
+let adapters = {}
 Object.keys(config).forEach((protocol) => {
   const networks = Object.keys(config[protocol]);
   networks.forEach((chain) => {
@@ -128,31 +126,37 @@ Object.keys(config).forEach((protocol) => {
       const bals = await api.multiCall({ abi: borrowFn, calls: pools });
      return api.addTokens(tokens, bals);
     };
-    if (!module.exports[chain]) {
-      module.exports[chain] = { tvl, borrowed };
-    } else {
-      module.exports[chain].tvl = (function (originalTvl) {
-        return async function (api) {
-          const originalResult = await originalTvl(api);
-          const newResult = await tvl(api);
-          for (const [token, amount] of Object.entries(newResult)) {
-            originalResult[token] =
-              api.add(originalResult[token], amount);
-          }
-          return originalResult;
-        };
-      })(module.exports[chain].tvl);
 
-      module.exports[chain].borrowed = (function (originalBorrowed) {
-        return async function (api) {
-          const originalResult = await originalBorrowed(api);
-          const newResult = await borrowed(api);
-         // return Number(originalResult) + Number(newResult);
-          return api.add(originalResult, newResult)
-        };
-      })(module.exports[chain].borrowed);
+    // returns a function used to sum total protocols tvl amount per chain
+    const sumTvlPerChain = (originalTvl) => {
+      return async (api) => {
+        const originalResult = await originalTvl(api);
+        const newResult = await tvl(api);
+        for (const [token, amount] of Object.entries(newResult)) {
+          originalResult[token] = Number(originalResult[token]) + Number(amount);
+        }
+        return originalResult;
+      };
+    };
+    // returns a function used to sum total protocols borrowed amount per chain
+    const sumBorrowedPerChain = (originalBorrowed) => {
+      return async (api) => {
+        const originalResult = await originalBorrowed(api)
+        const newResult = await borrowed(api)
+        console.log(originalResult, Number(newResult))
+        return Number(originalResult) + Number(newResult);
+        // return api.add(originalResult, newResult);
+      };
+    };
+     
+    if (!adapters[chain]) {
+      adapters[chain] = { tvl, borrowed };
+    } else {
+      adapters[chain].tvl = sumTvlPerChain(adapters[chain].tvl);
+      adapters[chain].borrowed = sumBorrowedPerChain(adapters[chain].borrowed);
     }
   });
 });
 
+Object.assign(module.exports, adapters)
 module.exports.ethereum.staking = stakings(singleStakingContracts, CPOOL);
