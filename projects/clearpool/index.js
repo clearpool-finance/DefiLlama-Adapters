@@ -1,6 +1,5 @@
 //  npm i -f
 //  node test.js projects/clearpool/index.js
-// fix tvl
 const abi = require("./abi.json");
 
 const { stakings } = require("../helper/staking");
@@ -22,7 +21,7 @@ const CHAIN = {
   POLYGON_ZKEVM: "polygon_zkevm",
   FLARE: "flare",
   BASE: "base",
-  MANTLE: 'mantle'
+  MANTLE: "mantle",
 };
 
 const config = {
@@ -48,9 +47,9 @@ const config = {
       fromBlock: 113112037,
     },
     [CHAIN.MANTLE]: {
-       factory: '0xB217D93a8f6A4b7861bB2C865a8C22105FbCdE41', 
-       fromBlock: 49691965 ,
-    }
+      factory: "0xB217D93a8f6A4b7861bB2C865a8C22105FbCdE41",
+      fromBlock: 49691965,
+    },
   },
   vaults: {
     [CHAIN.BASE]: {
@@ -61,6 +60,8 @@ const config = {
       factory: "0x8E557363AC9E5cbf09A2616A302CA3c8f6ab2b7A",
       fromBlock: 42597808,
     },
+    
+
   },
   treasury: {
     [CHAIN.FLARE]: {
@@ -125,9 +126,33 @@ Object.keys(config).forEach((protocol) => {
     const borrowed = async (api) => {
       const { pools, tokens } = await _getLogs(api);
       const bals = await api.multiCall({ abi: borrowFn, calls: pools });
-      api.addTokens(tokens, bals);
+     return api.addTokens(tokens, bals);
     };
-    module.exports[chain] = { tvl, borrowed };
+    if (!module.exports[chain]) {
+      module.exports[chain] = { tvl, borrowed };
+    } else {
+      module.exports[chain].tvl = (function (originalTvl) {
+        return async function (api) {
+          const originalResult = await originalTvl(api);
+          const newResult = await tvl(api);
+          for (const [token, amount] of Object.entries(newResult)) {
+            originalResult[token] =
+              Number(originalResult[token]) + Number(amount);
+          }
+          console.log(originalResult)
+          return originalResult;
+        };
+      })(module.exports[chain].tvl);
+
+      module.exports[chain].borrowed = (function (originalBorrowed) {
+        return async function (api) {
+          const originalResult = await originalBorrowed(api);
+          const newResult = await borrowed(api);
+          console.log(originalResult || "sth", newResult || "sth");
+          return Number(originalResult) + Number(newResult);
+        };
+      })(module.exports[chain].borrowed);
+    }
   });
 });
 
