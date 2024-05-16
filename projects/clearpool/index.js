@@ -118,11 +118,7 @@ const prepareProtocolsPerChain = (chain) => {
         borrowFn,
         protocol,
       };
-      if (!contracts[chain]) {
-        contracts = [data];
-      } else {
         contracts.push(data);
-      }
     });
   return contracts;
 };
