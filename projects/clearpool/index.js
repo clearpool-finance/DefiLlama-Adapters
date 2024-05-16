@@ -190,3 +190,4 @@ Object.keys(config).forEach((chain) => {
 });
 
 module.exports.ethereum.staking = stakings(singleStakingContracts, CPOOL);
+// support prime
