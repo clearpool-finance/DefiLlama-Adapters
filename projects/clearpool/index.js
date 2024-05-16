@@ -125,7 +125,6 @@ const prepareProtocolsPerChain = (chain) => {
 
 Object.keys(config).forEach((chain) => {
   const dataPerChain = prepareProtocolsPerChain(chain);
-  console.log(dataPerChain)
   const _getLogs = async (
     api,
     factory,
