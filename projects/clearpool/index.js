@@ -110,14 +110,13 @@ const prepareProtocolsPerChain = (chain) => {
   protocols.forEach((protocol) => {
     const { fromBlock, factory } = config[chain][protocol];
     const { abi, borrowFn } = getEventAndABI(protocol);
-    const data = {
+    contracts.push({
       fromBlock,
       factory,
       abi,
       borrowFn,
       protocol,
-    };
-    contracts.push(data);
+    });
   });
   return contracts;
 };
