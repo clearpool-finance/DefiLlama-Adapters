@@ -86,7 +86,7 @@ const config = {
     },
     prime: {
       factory: "0x7A05280940A23749106D8Fb2cA4b10B9D1C89067",
-      fromBlock: "45264014",
+      fromBlock: 45264014,
     },
   },
   [CHAIN.FLARE]: {
