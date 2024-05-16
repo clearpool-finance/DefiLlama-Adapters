@@ -28,7 +28,7 @@ const config = {
   [CHAIN.ETHEREUM]: {
     dynamic: {
       factory: "0xde204e5a060ba5d3b63c7a4099712959114c2d48",
-      fromBlock: 14443222,
+      fromBlock: 14784948,
     },
     prime: {
       factory: "0x83D5c08eCfe3F711e1Ff34618c0Dcc5FeFBe1791",
@@ -66,8 +66,12 @@ const config = {
   [CHAIN.MANTLE]: {
     dynamic: {
       factory: "0xB217D93a8f6A4b7861bB2C865a8C22105FbCdE41",
-      fromBlock: 49691965,
+      fromBlock: 49691271,
     },
+    vaults: {
+      factory: "0xF041A2838794266d19f79709F416A2977F896A9B",
+      fromBlock: 59594636
+    }
   },
   [CHAIN.BASE]: {
     vaults: {
