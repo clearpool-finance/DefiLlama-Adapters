@@ -104,11 +104,9 @@ const getEventAndABI = (protocol) => {
   }
   return { borrowFn, abi };
 };
-let adapters = {};
 
-const prepareProtocolsPerChain = () => {
-  const contracts = {};
-  Object.keys(config).forEach((chain) => {
+const prepareProtocolsPerChain = (chain) => {
+  let contracts = [];
     const protocols = Object.keys(config[chain]);
     protocols.forEach((protocol) => {
       const { fromBlock, factory } = config[chain][protocol];
@@ -121,17 +119,17 @@ const prepareProtocolsPerChain = () => {
         protocol,
       };
       if (!contracts[chain]) {
-        contracts[chain] = [data];
+        contracts = [data];
       } else {
-        contracts[chain].push(data);
+        contracts.push(data);
       }
     });
-  });
   return contracts;
 };
+
 Object.keys(config).forEach((chain) => {
-  const data = prepareProtocolsPerChain();
-  const dataPerChain = data[chain];
+  const dataPerChain = prepareProtocolsPerChain(chain);
+  console.log(dataPerChain)
   const _getLogs = async (
     api,
     factory,
@@ -202,8 +200,7 @@ Object.keys(config).forEach((chain) => {
 
     return api.addTokens(allTokens, balances);
   };
-  adapters[chain] = { tvl, borrowed };
+  module.exports[chain] = { tvl, borrowed };
 });
 
-Object.assign(module.exports, adapters);
 module.exports.ethereum.staking = stakings(singleStakingContracts, CPOOL);
