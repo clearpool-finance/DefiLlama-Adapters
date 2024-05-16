@@ -47,7 +47,7 @@ const config = {
     dynamic: {
       factory: "0x99C10A7aBd93b2db6d1a2271e69F268a2c356b80",
       fromBlock: 107128813,
-    }
+    },
   },
   [CHAIN.ARBITRUM]: {
     dynamic: {
@@ -78,7 +78,6 @@ const config = {
       factory: "0x8E557363AC9E5cbf09A2616A302CA3c8f6ab2b7A",
       fromBlock: 23711495,
     },
-    
   },
 };
 
@@ -107,31 +106,25 @@ const getEventAndABI = (protocol) => {
 
 const prepareProtocolsPerChain = (chain) => {
   let contracts = [];
-    const protocols = Object.keys(config[chain]);
-    protocols.forEach((protocol) => {
-      const { fromBlock, factory } = config[chain][protocol];
-      const { abi, borrowFn } = getEventAndABI(protocol);
-      const data = {
-        fromBlock,
-        factory,
-        abi,
-        borrowFn,
-        protocol,
-      };
-        contracts.push(data);
-    });
+  const protocols = Object.keys(config[chain]);
+  protocols.forEach((protocol) => {
+    const { fromBlock, factory } = config[chain][protocol];
+    const { abi, borrowFn } = getEventAndABI(protocol);
+    const data = {
+      fromBlock,
+      factory,
+      abi,
+      borrowFn,
+      protocol,
+    };
+    contracts.push(data);
+  });
   return contracts;
 };
 
 Object.keys(config).forEach((chain) => {
   const dataPerChain = prepareProtocolsPerChain(chain);
-  const _getLogs = async (
-    api,
-    factory,
-    fromBlock,
-    abi,
-    protocol
-  ) => {
+  const _getLogs = async (api, factory, fromBlock, abi, protocol) => {
     const logs = await getLogs({
       api,
       target: factory,
@@ -152,7 +145,7 @@ Object.keys(config).forEach((chain) => {
   const tvl = async (api) => {
     let allTokens = [];
     let allPools = [];
-  
+
     const promiseArray = dataPerChain.map(
       async ({ factory, fromBlock, abi, borrowFn, protocol }) => {
         const { pools, tokens } = await _getLogs(
@@ -163,20 +156,19 @@ Object.keys(config).forEach((chain) => {
           protocol
         );
         allTokens.push(...tokens);
-        allPools.push(...pools); 
+        allPools.push(...pools);
       }
     );
-  
+
     await Promise.all(promiseArray);
-  
+
     return api.sumTokens({ tokensAndOwners2: [allTokens, allPools] });
   };
-  
 
   const borrowed = async (api) => {
     const balances = [];
     const allTokens = [];
-    
+
     const promiseArray = dataPerChain.map(
       async ({ factory, fromBlock, abi, borrowFn, protocol }) => {
         const { pools, tokens } = await _getLogs(
@@ -187,7 +179,7 @@ Object.keys(config).forEach((chain) => {
           protocol
         );
         const bals = await api.multiCall({ abi: borrowFn, calls: pools });
-        balances.push(...bals); 
+        balances.push(...bals);
         allTokens.push(...tokens);
       }
     );
