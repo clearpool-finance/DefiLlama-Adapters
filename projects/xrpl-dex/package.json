@@ -10,5 +10,8 @@
   "description": "",
   "dependencies": {
     "ripple-binary-codec": "^2.1.0"
+  },
+  "overrides": {
+    "ws": "^8.20.1"
   }
 }
